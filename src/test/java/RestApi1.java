@@ -8,8 +8,8 @@ import static io.restassured.RestAssured.*;
 public class RestApi1 {
 
 
-        @Test
-        public void t01_get_token_fail(){
+    @Test
+        public void Test_token_fail(){
             //Request an account token without authorization header
             RestAssured.baseURI = String.format("https://webapi.segundamano.mx/nga/api/v1.1/private/accounts");
             Response response = given().log().all()
@@ -22,4 +22,30 @@ public class RestApi1 {
             System.out.println("Error Code expected: VALIDATION FAILED \nResult: " + errorCode);
             assertEquals("VALIDATION_FAILED",errorCode);
         }
+
+        @Test
+        public void Create_account(){
+            RestAssured.baseURI = String.format("https://webapi.segundamano.mx/nga/api/v1.1/private/accounts?lang=es");
+            Response response = given().log().all()
+                    .post();
+            System.out.println("Result: " + response.getStatusCode());
+
+
+        }
+
+    @Test
+    public void validateStatusCode() {
+        given().queryParam("lang", "es").when()
+                .get("https://webapi.segundamano.mx/nga/api/v1.1/private/accounts")
+                .then().statusCode(401);
+    }
+
+    @Test
+    public void validateStatusCode_extract_response() {
+        Response response = given().queryParam("lang", "es").when()
+                .get("https://webapi.segundamano.mx/nga/api/v1.1/private/accounts")
+                .then().extract().response().statusCode(401);
+        System.out.println ("Response: " + response.asString ());
+
+
 }
