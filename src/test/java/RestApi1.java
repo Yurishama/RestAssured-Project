@@ -4,8 +4,21 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static org.junit.Assert.*;
 import static io.restassured.RestAssured.*;
+import java.util.Base64;
+
 
 public class RestApi1 {
+
+ //Variables
+    static private String baseUrl  = "https://webapi.segundamano.mx";
+    static private String token;
+    static private String accountID;
+    static private String name;
+    static private String uuid;
+    static private String newText;
+    static private String adID;
+    static private String token2;
+    static private String addressID;
 
     @Test
     public void get_token_status_fail_test(){
@@ -47,6 +60,46 @@ public class RestApi1 {
                 .get("https://webapi.segundamano.mx/nga/api/v1.1/private/accounts")
                 .then().statusCode(401);
     }
+
+
+    @Test
+    public void t02_get_token_correct(){
+        //Request an account token with an authorization header
+        String authorizationToken = "cGFwaXRhc2xleXM5MUBnbWFpbC5jb206Y29udHJhMTIz";
+        RestAssured.baseURI = String.format("%s/nga/api/v1.1/private/accounts",baseUrl);
+        Response response = given().log().all()
+                .header("Authorization","Basic " + authorizationToken)
+                .post();
+        //validations
+        String body = response.getBody().asString();
+        System.out.println("Status expected: 200" );
+        System.out.println("Result token: " + response.getStatusCode());
+        assertEquals(200,response.getStatusCode());
+        assertTrue(body.contains("access_token"));
+    }
+
+    @Test
+    public void t10_user_has_no_address(){
+        //Get user addresses shoudl be an empty list
+        String token2Keys = uuid + ":" + token;
+        token2 = Base64.getEncoder().encodeToString(token2Keys.getBytes());
+        RestAssured.baseURI = String.format("%s/addresses/v1/get",baseUrl);
+        Response response = given()
+                .log().all()
+                .header("Authorization","Basic " + token2)
+                .get();
+        //validations
+        String body = response.getBody().asString();
+        System.out.println("Body: " + body );
+        System.out.println("Status expected: 200" );
+        System.out.println("Result: " + response.getStatusCode());
+        assertEquals(200,response.getStatusCode());
+        String addressesList = response.jsonPath().getString("addresses");
+        System.out.println("List expected to be empty \nResult: " + addressesList);
+        assertEquals("[:]",addressesList);
+    }
+
+
 
 
 
