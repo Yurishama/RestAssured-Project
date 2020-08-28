@@ -182,7 +182,11 @@ public class API_test {
                 .body(bodyRequest)
                 .post();
         //Validaciones
+
         String body = response.getBody().asString();
+        System.out.println("Body: " + body );
+
+
         System.out.println("Status expected: 201" );
         System.out.println("Result: " + response.getStatusCode());
         assertEquals(201, response.getStatusCode());
@@ -287,6 +291,8 @@ public class API_test {
                 .post();
         //Validaciones
         String body = response.getBody().asString();
+
+        System.out.println("Body addres: " + body );
         System.out.println("Status expected: 201" );
         System.out.println("Result: " + response.getStatusCode());
         assertEquals(201, response.getStatusCode());

@@ -18,7 +18,7 @@ public class RestApi1 {
     static private String newText;
     static private String adID;
     static private String token2;
-    static private String addressID;
+    static private String address_id);
 
     @Test
     public void get_token_status_fail_test(){
@@ -99,8 +99,34 @@ public class RestApi1 {
         assertEquals("[:]",addressesList);
     }
 
+    @Test
+    public void j_adAddress() {
+        RestAssured.baseURI = String.format("%s/addresses/v1/create", base_url);
+        Response response = given().log().all().
+                header("Authorization", "Basic " + getToken2(uuid, token)).
+                header("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8").
+                formParam("contact", "Casa Grande").
+                formParam("phone", "3366778899").
+                formParam("rfc", "CASE090102").
+                formParam("zipCode", "98101").
+                formParam("exteriorInfo", "Lopez Mateos 890").
+                formParam("region", "11").
+                formParam("municipality", "296").
+                formParam("alias", "Casa grande").
+                post();
 
+        //Save body response as a String
+        String body = response.getBody().asString();
+        System.out.println("Test 10 Add valid Address - Response Body:" + body);
 
+        //Assertions
+        assertEquals(201, response.getStatusCode());
+        assertNotNull(body);
+        assertTrue(body.contains("addressID"));
 
+        //Set response value into address_id variable
+        address_id = response.jsonPath().getString("addressID");
+        System.out.println("Address id created: "+ address_id);
+    }
 
 }
